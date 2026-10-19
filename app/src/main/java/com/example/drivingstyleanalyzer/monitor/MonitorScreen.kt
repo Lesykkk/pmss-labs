@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drivingstyleanalyzer.R
 import com.example.drivingstyleanalyzer.monitor.components.AccelerationIndicator
+import com.example.drivingstyleanalyzer.monitor.components.BleControlCard
+import com.example.drivingstyleanalyzer.monitor.components.BleLogCard
 import com.example.drivingstyleanalyzer.monitor.components.DrivingStatusCard
 import com.example.drivingstyleanalyzer.monitor.components.EventCountersCard
 import com.example.drivingstyleanalyzer.monitor.components.SensorReadingsCard
@@ -59,6 +61,8 @@ fun MonitorContent(state: MonitorState, onAction: (MonitorAction) -> Unit) {
             item { SensorReadingsCard(state.acceleration) }
             item { AccelerationIndicator(state.acceleration) }
             item { EventCountersCard(state.analysis, onReset = { onAction(MonitorAction.ResetClick) }) }
+            item { BleControlCard(state.ble, onAction) }
+            item { BleLogCard(state.ble.log) }
         }
     }
 }

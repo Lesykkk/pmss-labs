@@ -18,4 +18,18 @@
     <string name="turn_label">Різкі повороти</string>
     <string name="reset_counts">Скинути лічильники</string>
     <string name="counters_reset">Лічильники скинуто</string>
+    <string name="ble_title">Зв\'язок з бортовим хабом (BLE, імітація)</string>
+    <string name="ble_status">Статус: %1$s</string>
+    <string name="ble_disconnected">Disconnected</string>
+    <string name="ble_scanning">Сканування…</string>
+    <string name="ble_connecting">Підключення…</string>
+    <string name="ble_connected">Connected</string>
+    <string name="ble_data_transfer">Передача даних</string>
+    <string name="ble_scan">Пошук пристроїв</string>
+    <string name="ble_disconnect">Відключити</string>
+    <string name="ble_connect">Підключити</string>
+    <string name="ble_devices">Знайдені пристрої</string>
+    <string name="ble_no_devices">Пристроїв ще не знайдено</string>
+    <string name="ble_log_title">Журнал обміну</string>
+    <string name="ble_log_empty">Повідомлень поки немає</string>
 </resources>
