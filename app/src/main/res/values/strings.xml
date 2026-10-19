@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Аналіз стилю водіння</string>
+    <string name="current_status">Стан моніторингу</string>
+    <string name="status_waiting">Очікування даних сенсора</string>
+    <string name="status_paused">Зчитування призупинено</string>
+    <string name="status_missing">Акселерометр недоступний</string>
+    <string name="status_error">Не вдалося запустити сенсор</string>
+    <string name="status_smooth">Плавний рух</string>
+    <string name="status_braking">Різке гальмування</string>
+    <string name="status_turn">Різкий поворот</string>
+    <string name="status_both">Гальмування та поворот</string>
+    <string name="accelerometer_readings">Показники акселерометра (з урахуванням тяжіння)</string>
+    <string name="acceleration_unit">Одиниці вимірювання — м/с²</string>
+    <string name="indicator_title">Положення пристрою</string>
+    <string name="indicator_caption">Проєкція сирого прискорення на X/Y. Шкала ±10 м/с²; Y зростає вгору.</string>
+    <string name="event_counters">Виявлені події</string>
+    <string name="braking_label">Різкі гальмування</string>
+    <string name="turn_label">Різкі повороти</string>
+    <string name="reset_counts">Скинути лічильники</string>
+    <string name="counters_reset">Лічильники скинуто</string>
+</resources>
