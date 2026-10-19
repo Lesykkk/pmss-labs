@@ -1,0 +1,18 @@
+# IDE state (machine-specific)
+.idea/
+*.iml
+
+# Kotlin compiler session logs
+.kotlin/
+
+# Gradle / build output
+.gradle/
+build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS
+.DS_Store
+Thumbs.db
