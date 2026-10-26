@@ -23,6 +23,7 @@ import com.example.drivingstyleanalyzer.R
 import com.example.drivingstyleanalyzer.monitor.components.AccelerationIndicator
 import com.example.drivingstyleanalyzer.monitor.components.BleControlCard
 import com.example.drivingstyleanalyzer.monitor.components.BleLogCard
+import com.example.drivingstyleanalyzer.monitor.components.CloudSyncCard
 import com.example.drivingstyleanalyzer.monitor.components.DrivingStatusCard
 import com.example.drivingstyleanalyzer.monitor.components.EventCountersCard
 import com.example.drivingstyleanalyzer.monitor.components.SensorReadingsCard
@@ -33,12 +34,16 @@ fun MonitorScreen(vm: MonitorViewModel) {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val countersResetMessage = stringResource(R.string.counters_reset)
+    val noNetworkMessage = stringResource(R.string.no_network_message)
 
     LaunchedEffect(Unit) {
         vm.events.collect { event ->
             when (event) {
                 MonitorEvent.CountersReset ->
                     Toast.makeText(context, countersResetMessage, Toast.LENGTH_SHORT).show()
+
+                MonitorEvent.NoNetwork ->
+                    Toast.makeText(context, noNetworkMessage, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -61,6 +66,7 @@ fun MonitorContent(state: MonitorState, onAction: (MonitorAction) -> Unit) {
             item { SensorReadingsCard(state.acceleration) }
             item { AccelerationIndicator(state.acceleration) }
             item { EventCountersCard(state.analysis, onReset = { onAction(MonitorAction.ResetClick) }) }
+            item { CloudSyncCard(state.cloud) }
             item { BleControlCard(state.ble, onAction) }
             item { BleLogCard(state.ble.log) }
         }

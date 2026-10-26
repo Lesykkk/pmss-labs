@@ -9,6 +9,14 @@ enum class SensorStatus { WAITING, ACTIVE, PAUSED, MISSING, ERROR }
 
 enum class StatusKind { WAITING, PAUSED, MISSING, ERROR, SMOOTH, BRAKING, TURN, BOTH }
 
+enum class SyncStatus { IDLE, SYNCED, PENDING, FAILED }
+
+data class CloudState(
+    val status: SyncStatus = SyncStatus.IDLE,
+    val sentCount: Int = 0,
+    val lastSyncMs: Long? = null
+)
+
 data class LogEntry(val timestampMs: Long, val message: String)
 
 data class BleState(
@@ -30,7 +38,8 @@ data class MonitorState(
     val acceleration: Acceleration = Acceleration(),
     val analysis: DrivingAnalysis = DrivingAnalysis(),
     val sensorStatus: SensorStatus = SensorStatus.WAITING,
-    val ble: BleState = BleState()
+    val ble: BleState = BleState(),
+    val cloud: CloudState = CloudState()
 ) {
     val statusKind: StatusKind
         get() = when (sensorStatus) {
@@ -64,4 +73,5 @@ sealed interface MonitorAction {
 
 sealed interface MonitorEvent {
     data object CountersReset : MonitorEvent
+    data object NoNetwork : MonitorEvent
 }

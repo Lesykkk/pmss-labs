@@ -3,6 +3,7 @@ package com.example.drivingstyleanalyzer.monitor
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.drivingstyleanalyzer.DrivingApp
 import com.example.drivingstyleanalyzer.helpers.AccelerometerReader
 import com.example.drivingstyleanalyzer.helpers.ble.BleDevice
 import com.example.drivingstyleanalyzer.helpers.ble.BleLogger
@@ -11,6 +12,7 @@ import com.example.drivingstyleanalyzer.helpers.ble.ConnectionState
 import com.example.drivingstyleanalyzer.helpers.ble.IBleConnector
 import com.example.drivingstyleanalyzer.helpers.ble.MockBleConnector
 import com.example.drivingstyleanalyzer.helpers.ble.MockBleScanner
+import com.example.drivingstyleanalyzer.repository.SensorReading
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MonitorViewModel(app: Application) : AndroidViewModel(app) {
     private val accelerometer = AccelerometerReader(app)
@@ -28,6 +31,8 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
     private val scanner = MockBleScanner()
     private val connector: IBleConnector = MockBleConnector()
     private val logger = BleLogger()
+    private val repository = (app as DrivingApp).sensorRepository
+    private val throttle = UploadThrottle()
 
     private val _state = MutableStateFlow(
         MonitorState(sensorStatus = if (accelerometer.isAvailable) SensorStatus.WAITING else SensorStatus.MISSING)
@@ -39,6 +44,7 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
 
     private var sensorJob: Job? = null
     private var connectJob: Job? = null
+    private var uploadJob: Job? = null
 
     private val outbox = Channel<String>(Channel.UNLIMITED)
 
@@ -71,6 +77,9 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
                         it.copy(acceleration = acceleration, analysis = analysis, sensorStatus = SensorStatus.ACTIVE)
                     }
 
+                    if (throttle.shouldSend(acceleration, sample.timestampNs / NANOS_PER_MILLI)) {
+                        upload(SensorReading(SENSOR_TYPE, sample.x, sample.y, sample.z, System.currentTimeMillis()))
+                    }
                     if (analysis.brakingCount > previous.brakingCount) outbox.trySend("BRAKING:${analysis.brakingCount}")
                     if (analysis.turnCount > previous.turnCount) outbox.trySend("TURN:${analysis.turnCount}")
                 }
@@ -96,6 +105,33 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
         val analysis = analyzer.resetCounts()
         _state.update { it.copy(analysis = analysis) }
         viewModelScope.launch { _events.send(MonitorEvent.CountersReset) }
+    }
+
+    private fun upload(reading: SensorReading) {
+        if (uploadJob?.isActive == true) return
+        uploadJob = viewModelScope.launch {
+            repository.save(reading)
+                .onSuccess {
+                    _state.update {
+                        it.copy(
+                            cloud = CloudState(
+                                status = SyncStatus.SYNCED,
+                                sentCount = it.cloud.sentCount + 1,
+                                lastSyncMs = System.currentTimeMillis()
+                            )
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    val rejected = error is HttpException
+                    val wasPending = _state.value.cloud.status == SyncStatus.PENDING
+                    _state.update {
+                        it.copy(cloud = it.cloud.copy(status = if (rejected) SyncStatus.FAILED else SyncStatus.PENDING))
+                    }
+                    if (!rejected && !wasPending) _events.send(MonitorEvent.NoNetwork)
+                }
+        }
     }
 
     private fun startScan() {
@@ -156,5 +192,7 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
 
     private companion object {
         const val MAX_LOG_ENTRIES = 100
+        const val SENSOR_TYPE = "accelerometer"
+        const val NANOS_PER_MILLI = 1_000_000L
     }
 }

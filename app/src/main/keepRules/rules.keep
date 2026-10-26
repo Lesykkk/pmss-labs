@@ -10,3 +10,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep class com.example.drivingstyleanalyzer.repository.SensorPayload { *; }
+-keepattributes Signature, *Annotation*
