@@ -13,6 +13,9 @@ captures/
 .externalNativeBuild/
 .cxx/
 
+# Firebase config contains the project API key
+app/google-services.json
+
 # OS
 .DS_Store
 Thumbs.db

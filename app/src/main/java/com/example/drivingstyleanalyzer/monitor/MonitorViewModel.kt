@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
+import java.io.IOException
 
 class MonitorViewModel(app: Application) : AndroidViewModel(app) {
     private val accelerometer = AccelerometerReader(app)
@@ -124,7 +124,7 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    val rejected = error is HttpException
+                    val rejected = error !is IOException
                     val wasPending = _state.value.cloud.status == SyncStatus.PENDING
                     _state.update {
                         it.copy(cloud = it.cloud.copy(status = if (rejected) SyncStatus.FAILED else SyncStatus.PENDING))
