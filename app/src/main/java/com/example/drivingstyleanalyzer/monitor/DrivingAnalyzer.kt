@@ -54,10 +54,3 @@ class DrivingAnalyzer {
     private fun ready(previousTime: Long?, now: Long): Boolean =
         previousTime == null || now - previousTime >= DrivingRules.COOLDOWN_NS
 }
-
-data class DrivingAnalysis(
-    val isBraking: Boolean = false,
-    val isTurning: Boolean = false,
-    val brakingCount: Int = 0,
-    val turnCount: Int = 0
-)

@@ -123,7 +123,6 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
                     }
                 }
                 .onFailure { error ->
-                    if (error is CancellationException) throw error
                     val rejected = error !is IOException
                     val wasPending = _state.value.cloud.status == SyncStatus.PENDING
                     _state.update {
@@ -176,7 +175,7 @@ class MonitorViewModel(app: Application) : AndroidViewModel(app) {
             log("ACK <- ${BleProfile.CHAR_STATUS}: $reply")
         } catch (e: CancellationException) {
             throw e
-        } catch (e: IllegalStateException) {
+        } catch (e: Exception) {
             log("Send failed: ${e.message}")
         }
 

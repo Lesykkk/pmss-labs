@@ -5,6 +5,13 @@ import com.example.drivingstyleanalyzer.helpers.ble.ConnectionState
 
 data class Acceleration(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f)
 
+data class DrivingAnalysis(
+    val isBraking: Boolean = false,
+    val isTurning: Boolean = false,
+    val brakingCount: Int = 0,
+    val turnCount: Int = 0
+)
+
 enum class SensorStatus { WAITING, ACTIVE, PAUSED, MISSING, ERROR }
 
 enum class StatusKind { WAITING, PAUSED, MISSING, ERROR, SMOOTH, BRAKING, TURN, BOTH }
