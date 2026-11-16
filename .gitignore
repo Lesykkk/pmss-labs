@@ -16,3 +16,6 @@ captures/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local Firebase project configuration
+/app/google-services.json

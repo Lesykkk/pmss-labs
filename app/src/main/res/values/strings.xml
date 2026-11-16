@@ -32,4 +32,12 @@
     <string name="ble_no_devices">Пристроїв ще не знайдено</string>
     <string name="ble_log_title">Журнал обміну</string>
     <string name="ble_log_empty">Повідомлень поки немає</string>
+    <string name="cloud_title">Хмарна синхронізація</string>
+    <string name="cloud_idle">Очікування першого запису</string>
+    <string name="cloud_syncing">Відправлення…</string>
+    <string name="cloud_pending">Pending · Очікування мережі</string>
+    <string name="cloud_synced">Синхронізовано</string>
+    <string name="cloud_failed">Помилка хмарного запису</string>
+    <string name="cloud_confirmed">Підтверджено записів: %1$d</string>
+    <string name="cloud_offline_message">Немає з’єднання з Firebase. Записи очікують відправки.</string>
 </resources>
